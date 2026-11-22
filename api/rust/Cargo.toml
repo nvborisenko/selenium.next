@@ -1,0 +1,8 @@
+[package]
+name = "selenium-next"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+
+[dependencies]
+selenium-sync = { path = "../../core/selenium-sync", version = "0.1.0" }

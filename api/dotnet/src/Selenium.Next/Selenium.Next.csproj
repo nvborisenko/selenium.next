@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>Selenium.Next</RootNamespace>
+    <PackageId>Selenium.Next</PackageId>
+  </PropertyGroup>
+
+  <!-- Packaged native libraries: runtimes/<rid>/native/<lib> -->
+  <ItemGroup>
+    <None Include="runtimes/**" Pack="true" PackagePath="runtimes" Condition="Exists('runtimes')" />
+  </ItemGroup>
+
+</Project>

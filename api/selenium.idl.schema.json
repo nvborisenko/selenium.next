@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Selenium.Next API IDL",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["idl_version", "abi_version", "errors", "types"],
+  "properties": {
+    "idl_version": { "type": "integer", "minimum": 1 },
+    "abi_version": { "type": "integer", "minimum": 1 },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "code"],
+        "properties": { "name": { "type": "string" }, "code": { "type": "integer" } }
+      }
+    },
+    "types": { "type": "object", "additionalProperties": { "$ref": "#/definitions/type" } }
+  },
+  "definitions": {
+    "typeRef": { "type": "string", "description": "void | bool | int | string | list<T> | <TypeName>" },
+    "arg": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type"],
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "$ref": "#/definitions/typeRef" },
+        "optional": { "type": "boolean" }
+      }
+    },
+    "errorList": { "type": "array", "items": { "type": "string" } },
+    "type": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": { "enum": ["handle", "record"] },
+        "abstract": { "type": "boolean" },
+        "extends": { "type": "string" },
+        "owner": { "type": "string" },
+        "dispose": { "type": "string" },
+        "ctor": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "args": { "type": "array", "items": { "$ref": "#/definitions/arg" } },
+            "errors": { "$ref": "#/definitions/errorList" }
+          }
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": { "type": { "$ref": "#/definitions/typeRef" } }
+          }
+        },
+        "methods": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "args": { "type": "array", "items": { "$ref": "#/definitions/arg" } },
+              "returns": { "$ref": "#/definitions/typeRef" },
+              "errors": { "$ref": "#/definitions/errorList" }
+            }
+          }
+        },
+        "shortcuts": {
+          "type": "object",
+          "additionalProperties": { "type": "string", "pattern": "^\\w+\\.\\w+$" }
+        },
+        "fields": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+              "type": { "$ref": "#/definitions/typeRef" },
+              "optional": { "type": "boolean" },
+              "default": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+[package]
+name = "selenium-ffi"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "selenium_next_core"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+selenium-sync = { path = "../selenium-sync" }

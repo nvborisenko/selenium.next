@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=./selenium.idl.schema.json
+# Public API operations are synchronous and block the calling thread.
+idl_version: 1
+abi_version: 1
+
+errors:
+  - { name: InvalidArgument, code: 1 }
+  - { name: NoSuchContext,   code: 2 }
+  - { name: Timeout,         code: 3 }
+  - { name: LaunchFailed,    code: 4 }
+  - { name: Protocol,        code: 5 }
+  - { name: EventOverflow,   code: 6 }
+
+types:
+  Browser:
+    kind: handle
+    abstract: true
+    dispose: close            # disposing the browser closes the session
+    properties:
+      userContexts: { type: "list<UserContext>" }
+      defaultUserContext: { type: UserContext }
+      defaultPage: { type: Page }
+    methods:
+      getStatus:
+        returns: BrowserStatus
+        errors: [Protocol]
+      createUserContext:
+        returns: UserContext
+        errors: [Protocol]
+      subscribeNetworkBeforeRequest:
+        returns: NetworkEventSubscription
+        errors: [Protocol]
+    shortcuts:                # sugar generated as delegation, not hand-written
+      navigate: defaultPage.navigate
+
+  Chrome:
+    kind: handle
+    extends: Browser
+    ctor:
+      args:
+        - { name: options, type: ChromeOptions, optional: true }
+      errors: [LaunchFailed]
+
+  ChromeOptions:
+    kind: record
+    fields:
+      headless: { type: bool, default: false }
+      binaryPath: { type: string, optional: true }
+      driverPath: { type: string, optional: true }
+
+  BrowserStatus:
+    kind: record
+    fields:
+      ready: { type: bool }
+      message: { type: string }
+
+  UserContext:
+    kind: handle
+    owner: Browser
+    dispose: remove
+    properties:
+      pages: { type: "list<Page>" }
+    methods:
+      newPage:
+        returns: Page
+        errors: [Protocol]
+
+  Page:
+    kind: handle
+    owner: UserContext
+    dispose: close
+    methods:
+      navigate:
+        args:
+          - { name: url, type: string }
+        returns: void
+        errors: [InvalidArgument, NoSuchContext, Timeout, Protocol]
+
+  NetworkEventSubscription:
+    kind: handle
+    owner: Browser
+    methods:
+      next:
+        args:
+          - { name: timeoutMs, type: int }
+        returns: NetworkBeforeRequest
+        errors: [InvalidArgument, Timeout, Protocol, EventOverflow]
+
+  NetworkBeforeRequest:
+    kind: handle
+    owner: NetworkEventSubscription
+    properties:
+      requestId: { type: string }
+      url: { type: string }
+      method: { type: string }
+      redirectCount: { type: int }

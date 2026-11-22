@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="tests/Selenium.Next.Tests/Selenium.Next.Tests.csproj" />
+  <Project Path="src/Selenium.Next/Selenium.Next.csproj" />
+</Solution>
